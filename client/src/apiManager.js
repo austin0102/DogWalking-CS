@@ -17,3 +17,13 @@ export const getPets = async () => {
   }
   return res.json();
 };
+
+
+
+export const getSinglePet = async (id) => {
+  const res = await fetch(`/api/pets/${id}`);
+  if (!res.ok) {
+    throw new Error("Failed to fetch pet");
+  }
+  return res.json();
+};

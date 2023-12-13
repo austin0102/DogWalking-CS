@@ -1,3 +1,6 @@
+
+import React from "react";
+import { Link } from "react-router-dom";
 import { getPets } from "./apiManager";
 import { useEffect, useState } from "react";
 
@@ -20,7 +23,10 @@ export const Pets = () => {
       <ul>
         {pets.map((pet) => (
           <li key={pet.id}>
-            <strong>{pet.name}</strong>
+            
+            <Link to={`/pets/${pet.id}`}>
+              <strong>{pet.name}</strong>
+            </Link>
           </li>
         ))}
       </ul>

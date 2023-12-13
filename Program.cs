@@ -110,4 +110,33 @@ app.MapGet("/api/pets", () =>
     return petDTOs;
 });
 
+
+app.MapGet("/api/pets/{id}", (int id) =>
+{
+    Pet pet = pets.FirstOrDefault(p => p.Id == id);
+
+    if (pet == null)
+    {
+        return Results.NotFound($"Pet with ID {id} not found");
+    }
+
+    Walker walker = walkers.FirstOrDefault(w => w.Id == pet.WalkerId);
+
+    return Results.Ok(new PetDTO
+    {
+        Id = pet.Id,
+        Name = pet.Name,
+        WalkerId = pet.WalkerId,
+        Walker = walker != null
+            ? new WalkerDTO
+            {
+                Id = walker.Id,
+                Name = walker.Name,
+                Email = walker.Email
+                // Add other properties as needed
+            }
+            : null
+    });
+});
+
 app.Run();

@@ -1,21 +1,3 @@
-// import React from "react";
-// import ReactDOM from "react-dom/client";
-// import "./index.css";
-// import App from "./App";
-// import { BrowserRouter, Routes, Route } from "react-router-dom";
-// import reportWebVitals from "./reportWebVitals";
-// import Home from "./Home";
-
-// const root = ReactDOM.createRoot(document.getElementById("root"));
-// root.render(
-//   <BrowserRouter>
-//     <Routes>
-//       <Route path="/" element={<App />}>
-//         <Route index element={<Home />} />
-//       </Route>
-//     </Routes>
-//   </BrowserRouter>,
-// );
 
 import React from "react";
 import ReactDOM from "react-dom/client";
@@ -26,6 +8,7 @@ import reportWebVitals from "./reportWebVitals";
 import Home from "./Home";
 import { Walkers } from "./Walkers"; // Import the Walkers component
 import { Pets } from "./Pets";
+import { Pet } from "./petInfo";
 
 
 const root = ReactDOM.createRoot(document.getElementById("root"));
@@ -34,6 +17,7 @@ root.render(
     <Routes>
       <Route path="/" element={<App />}>
         <Route path="/" element={<Pets />} />
+        <Route path="pets/:id" element={<Pet />} />
         <Route path="walkers" element={<Walkers />} />
         
       </Route>
