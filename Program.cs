@@ -67,22 +67,54 @@ app.MapGet("/api/hello", () =>
 {
     return new { Message = "Welcome to DeShawn's Dog Walking" };
 });
-app.MapGet("/api/walkers", () =>
+
+
+
+app.MapGet("/api/walkers", (int? cityId) =>
 {
-    List<WalkerDTO> walkerDTOs = walkers.Select(walker => new WalkerDTO
+    List<WalkerDTO> walkerDTOs;
+
+    if (cityId.HasValue)
     {
-        Id = walker.Id,
-        Name = walker.Name,
-        Email = walker.Email,
-        CityId = walker.CityId, // Assuming your Walker class has a CityID property
-        City = cities.FirstOrDefault(city => city.Id == walker.CityId) != null
-            ? new CityDTO
+        // Filter walkers by cityId
+        walkerDTOs = walkers
+            .Where(walker => walker.CityId == cityId)
+            .Select(walker => new WalkerDTO
             {
-                Id = walker.CityId,
-                Name = cities.First(city => city.Id == walker.CityId).Name
-            }
-            : null
-    }).ToList();
+                Id = walker.Id,
+                Name = walker.Name,
+                Email = walker.Email,
+                CityId = walker.CityId,
+                City = cities.FirstOrDefault(city => city.Id == walker.CityId) != null
+                    ? new CityDTO
+                    {
+                        Id = walker.CityId,
+                        Name = cities.First(city => city.Id == walker.CityId).Name
+                    }
+                    : null
+            })
+            .ToList();
+    }
+    else
+    {
+        // Return all walkers
+        walkerDTOs = walkers
+            .Select(walker => new WalkerDTO
+            {
+                Id = walker.Id,
+                Name = walker.Name,
+                Email = walker.Email,
+                CityId = walker.CityId,
+                City = cities.FirstOrDefault(city => city.Id == walker.CityId) != null
+                    ? new CityDTO
+                    {
+                        Id = walker.CityId,
+                        Name = cities.First(city => city.Id == walker.CityId).Name
+                    }
+                    : null
+            })
+            .ToList();
+    }
 
     return walkerDTOs;
 });
@@ -111,6 +143,15 @@ app.MapGet("/api/pets", () =>
 });
 
 
+app.MapGet("/api/cities", () =>
+{
+    return cities.Select(city => new CityDTO
+    {
+        Id = city.Id,
+        Name = city.Name
+    });
+});
+
 app.MapGet("/api/pets/{id}", (int id) =>
 {
     Pet pet = pets.FirstOrDefault(p => p.Id == id);
@@ -138,5 +179,20 @@ app.MapGet("/api/pets/{id}", (int id) =>
             : null
     });
 });
+
+app.MapPost("/api/pets", (Pet pet) =>
+{
+    pet.Id = pets.Max(p => p.Id) + 1;
+    pets.Add(pet);
+
+    return Results.Created($"/api/pets/pet/{pet.Id}", new PetDTO
+    {
+        Id = pet.Id,
+        Name = pet.Name,
+        WalkerId = 0
+    });
+});
+
+
 
 app.Run();
